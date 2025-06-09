@@ -1,4 +1,4 @@
-# SQLite Clone Dev Log
+# SQLite Database in C Dev Log
 
 **Planning to build a SQLite-like database in C, following the https://cstack.github.io/db_tutorial/ to understand and apply core low-level concepts. My aim is to learn how databases work at a deeper level and then extend this foundation by adding my own features, such as (planned): Query Parser Improvements, B-Tree indexing, and Persisting to Disk in a binary format.**
 
