@@ -29,8 +29,11 @@ int main(int argc, char *argv[]) {
         if (strcmp(inputBuff->buffer, ".exit") == 0) {
             closeInputBuffer(inputBuff);
             exit(EXIT_SUCCESS);
-        } else {
-            printf("'%s' is not a recognised command.\n", inputBuff->buffer);
+        }
+
+        // check for meta commands
+        if (inputBuff->buffer[0] == '.') {
+            //
         }
     }
 
