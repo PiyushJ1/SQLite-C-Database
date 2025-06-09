@@ -15,15 +15,24 @@ InputBuffer *newInputBuffer();
 void printPrompt();
 ssize_t getline(char **lineptr, size_t *n, FILE *stream);
 void readInput(InputBuffer *inputBuff);
+void closeInputBuffer(InputBuffer *inputBuff);
 
 int main(int argc, char *argv[]) {
     InputBuffer *inputBuff = newInputBuffer();
 
+    // Read, evaluate, print, loop
     while (true) {
         printPrompt();
+        readInput(inputBuff);
+
+        // exit program if the exit command is given
+        if (strcmp(inputBuff->buffer, ".exit") == 0) {
+            closeInputBuffer(inputBuff);
+            exit(EXIT_SUCCESS);
+        } else {
+            printf("'%s' is not a recognised command.\n", inputBuff->buffer);
+        }
     }
-
-
 
     return 0;
 }
@@ -45,8 +54,9 @@ void printPrompt() {
 
 /**
  * Manual implementation of the getline() function, which isn't available in
- * C99 on Windows machines (without additional configuration since it is a 
- * POSIX function).
+ * C99 on Windows (without additional configuration since it is a 
+ * POSIX function). Works like fgets(), but dynamically allocates memory depending
+ * on the input size.
  */
 ssize_t getline(char **lineptr, size_t *n, FILE *stream) {
     if (lineptr == NULL || n == NULL || stream == NULL) return -1;
@@ -107,4 +117,9 @@ void readInput(InputBuffer *InputBuff) {
 
     // null terminate the string without \n
     InputBuff->buffer[numBytesRead - 1] = '\0';
+}
+
+void closeInputBuffer(InputBuffer *inputBuff) {
+    free(inputBuff->buffer);
+    free(inputBuff);
 }
