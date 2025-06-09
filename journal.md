@@ -9,7 +9,7 @@
 **What I learned:**  
 - 
 
-**What broke / blocked me:**  
+**What challenges I faced:**  
 - 
 
 **Next steps:**  
