@@ -44,7 +44,7 @@ void printPrompt() {
 }
 
 /**
- * Manual implementation of the getline() function, which isn't available on
+ * Manual implementation of the getline() function, which isn't available in
  * C99 on Windows machines (without additional configuration since it is a 
  * POSIX function).
  */
@@ -63,13 +63,14 @@ ssize_t getline(char **lineptr, size_t *n, FILE *stream) {
             fprintf(stderr, "error: could not allocate memory for getline()\n");
             return -1;
         }
-        
+
         *n = buffSize;
     }
 
     while ((c = fgetc(stream)) != EOF) {
         // double the memory size and allocate more memory
         if (pos + 1 >= *n) {
+            // double the memory size
             size_t newSize = *n * 2;
             char *newPtr = realloc(*lineptr, newSize);
             if (newPtr == NULL) {
@@ -94,5 +95,16 @@ ssize_t getline(char **lineptr, size_t *n, FILE *stream) {
 }
 
 void readInput(InputBuffer *InputBuff) {
+    ssize_t numBytesRead = getline(&(InputBuff->buffer), &(InputBuff->bufferLen), stdin);
 
+    if (numBytesRead <= 0) {
+        fprintf(stderr, "error: could not read input successfully\n");
+        exit(EXIT_FAILURE);
+    }
+
+    // remove trailing newline character
+    InputBuff->inputLen = numBytesRead - 1;
+
+    // null terminate the string without \n
+    InputBuff->buffer[numBytesRead - 1] = '\0';
 }
