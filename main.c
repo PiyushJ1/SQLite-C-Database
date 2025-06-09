@@ -1,29 +1,42 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/types.h>
+#include <stdbool.h>
 
+// wrapper struct to interact with the getline() function
 typedef struct {
     char *buffer;
-    size_t buffer_len;
-    ssize_t input_len;
+    size_t bufferLen;
+    ssize_t inputLen;
 } InputBuffer;
 
-InputBuffer *new_input_buffer();
+void printPrompt();
+InputBuffer *newInputBuffer();
 
 int main(int argc, char *argv[]) {
+    InputBuffer *inputBuff = newInputBuffer();
 
+    while (true) {
+        printPrompt();
+        
+    }
 
 
 
     return 0;
 }
 
-InputBuffer *new_input_buffer() {
-    InputBuffer *input_buffer = malloc(sizeof(InputBuffer));
-    input_buffer->buffer = NULL;
-    input_buffer->buffer_len = 0;
-    input_buffer->input_len = 0;
+void printPrompt() {
+    printf("db > ");
+}
 
-    return input_buffer;
+// initialises new input buffer
+InputBuffer *newInputBuffer() {
+    InputBuffer *inputBuff = (InputBuffer *) malloc(sizeof(InputBuffer));
+    inputBuff->buffer = NULL;
+    inputBuff->bufferLen = 0;
+    inputBuff->inputLen = 0;
+
+    return inputBuff;
 }
 
