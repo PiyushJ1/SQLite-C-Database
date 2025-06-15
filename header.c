@@ -105,13 +105,13 @@ PrepareResult prepareStatement(InputBuffer *InputBuff, Statement *statement) {
     // since input can be followed by other characters
     // e.g. insert 1 user foo@bar.com
     if (strncmp(InputBuff->buffer, "insert", 6) == 0) {
-        // int argsAssigned = sscanf(
-        //     InputBuff->buffer, "insert %d %s %s", &(statement->rowToInsert.id),
-        //     statement->rowToInsert.username, statement->rowToInsert.email);
+        int argsAssigned = sscanf(
+            InputBuff->buffer, "insert %d %s %s", &(statement->rowToInsert.id),
+            statement->rowToInsert.username, statement->rowToInsert.email);
         
-        // if (argsAssigned < 3) {
-        //     return PREPARE_SYNTAX_ERROR;
-        // }
+        if (argsAssigned < 3) {
+            return PREPARE_SYNTAX_ERROR;
+        }
 
         statement->type = STATEMENT_INSERT;
         return PREPARE_SUCCESS;
@@ -181,4 +181,21 @@ void *rowSlot(Table *table, uint32_t rowNum) {
     uint32_t byteOffset = rowOffset * ROW_SIZE;
 
     return page + byteOffset;
+}
+
+Table *newTable() {
+    Table *table = mallco(sizeof(Table));
+    table->numRows = 0;
+    for (uint32_t i = 0; i < MAX_TABLE_PAGES; i++) {
+        table->pages[i] = NULL;
+    }
+
+    return table;
+}
+
+void freeTable(Table *table) {
+    for (int i = 0; i < table->pages[i]; i++) {
+        free(table->pages[i]);
+    }
+    free(table);
 }

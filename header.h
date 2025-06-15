@@ -80,3 +80,6 @@ ExecuteResult *executeSelect(Statement *statement, Table *table);
 void serialiseRow(Row *source, void *destination);
 void deserialiseRow(void *source, Row *destination);
 void *rowSlot(Table *table, uint32_t rowNum);
+
+Table *newTable();
+void freeTable(Table *table);
