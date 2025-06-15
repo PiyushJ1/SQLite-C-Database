@@ -3,6 +3,10 @@
 #include <sys/types.h>
 #include <stdbool.h>
 #include <string.h>
+#include <stdint.h>
+
+#define COLUMN_USERNAME_SIZE 32
+#define COLUMN_EMAIL_SIZE 255
 
 // wrapper struct to interact with the getline() function
 typedef struct {
@@ -18,7 +22,8 @@ typedef enum {
 
 typedef enum {
     PREPARE_SUCCESS,
-    PREPARE_UNRECOGNISED_STATEMENT
+    PREPARE_UNRECOGNISED_STATEMENT,
+    PREPARE_SYNTAX_ERROR
 } PrepareResult;
 
 typedef enum {
@@ -27,8 +32,16 @@ typedef enum {
 } StatementType;
 
 typedef struct {
+    uint32_t id;
+    char username[COLUMN_USERNAME_SIZE];
+    char email[COLUMN_EMAIL_SIZE];
+} Row;
+
+typedef struct {
     StatementType type;
+    Row rowToInsert; // used only by the insert statement
 } Statement;
+
 
 void printPrompt();
 void readInput(InputBuffer *inputBuff);
@@ -177,6 +190,14 @@ PrepareResult prepareStatement(InputBuffer *InputBuff, Statement *statement) {
     // since input can be followed by other characters
     // e.g. insert 1 user foo@bar.com
     if (strncmp(InputBuff->buffer, "insert", 6) == 0) {
+        int argsAssigned = sscanf(
+            InputBuff->buffer, "insert %d %s %s", &(statement->rowToInsert.id),
+            statement->rowToInsert.username, statement->rowToInsert.email);
+        
+        if (argsAssigned < 3) {
+            return PREPARE_SYNTAX_ERROR;
+        }
+
         statement->type = STATEMENT_INSERT;
         return PREPARE_SUCCESS;
     }
