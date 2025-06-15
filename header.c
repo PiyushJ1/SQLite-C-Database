@@ -133,14 +133,31 @@ void executeStatement(Statement *statement) {
     }
 }
 
+// store the contents of the row into memory
 void serialiseRow(Row *source, void *destination) {
     memcpy(destination + ID_OFFSET, &(source->id), ID_SIZE);
     memcpy(destination + USERNAME_OFFSET, &(source->username), USERNAME_SIZE);
     memcpy(destination + EMAIL_OFFSET, &(source->email), EMAIL_SIZE);
 }
 
+// retrieve contents of the row from the memory into the row struct
 void deserialiseRow(void *source, Row *destination) {
     memcpy(&(destination->id), source + ID_OFFSET, ID_SIZE);
     memcpy(&(destination->username), source + USERNAME_OFFSET, USERNAME_SIZE);
     memcpy(&(destination->email), source + EMAIL_OFFSET, EMAIL_SIZE);
+}
+
+// find the specific row to read/write to
+void *rowSlot(Table *table, uint32_t rowNum) {
+    uint32_t pageNum = rowNum / ROWS_PER_PAGE;
+    void *page = table->pages[pageNum];
+    if (page == NULL) {
+        // allocate memory only when page trying to access page
+        page = table->pages[pageNum] = malloc(PAGE_SIZE); 
+    }
+
+    uint32_t rowOffset = rowNum % ROWS_PER_PAGE;
+    uint32_t byteOffset = rowOffset * ROW_SIZE;
+
+    return page + byteOffset;
 }
