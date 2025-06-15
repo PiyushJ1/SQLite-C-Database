@@ -50,8 +50,27 @@ int main(int argc, char *argv[]) {
 
         // check for meta commands
         if (inputBuff->buffer[0] == '.') {
-            //
+            switch (doMetaCommand(inputBuff)) {
+                case (META_COMMAND_SUCCESS):
+                    continue;
+                case (META_COMMAND_UNRECOGNISED_COMMAND):
+                    printf("Unrecognised command %s.\n", inputBuff->buffer);
+                    continue;
+            }
         }
+    
+        Statement statement;
+        switch (prepareStatement(inputBuff, &statement)) {
+            case (PREPARE_SUCCESS):
+                break;
+            case (PREPARE_UNRECOGNISED_STATEMENT):
+                printf("Unrecognised keyword at the start of '%s'\n", inputBuff->buffer);
+                continue;
+        }
+
+        executeStatement(&statement);
+        printf("Executed successfully.\n");
+
     }
 
     return 0;
@@ -128,7 +147,7 @@ void readInput(InputBuffer *InputBuff) {
     ssize_t numBytesRead = getline(&(InputBuff->buffer), &(InputBuff->bufferLen), stdin);
 
     if (numBytesRead <= 0) {
-        fprintf(stderr, "error: could not read input successfully\n");
+        fprintf(stderr, "error: could not read input\n");
         exit(EXIT_FAILURE);
     }
 
@@ -169,11 +188,11 @@ PrepareResult prepareStatement(InputBuffer *InputBuff, Statement *statement) {
 void executeStatement(Statement *statement) {
     switch (statement->type) {
     case STATEMENT_INSERT:
-        printf("Insert something here\n");
+        printf("can insert something here\n");
         break;
     
     case STATEMENT_SELECT:
-        printf("Select something here\n");
+        printf("can select something here\n");
         break;
     }
 }
