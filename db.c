@@ -11,11 +11,27 @@ typedef struct {
     ssize_t inputLen;
 } InputBuffer;
 
-InputBuffer *newInputBuffer();
+typedef enum {
+    META_COMMAND_SUCCESS,
+    META_COMMAND_UNRECOGNISED_COMMAND
+} MetaCommandResult;
+
+typedef enum {
+    PREPARE_SUCCESS,
+    PREPARE_UNRECOGNISED_STATEMENT
+} PrepareResult;
+
+typedef enum {
+    STATEMENT_INSERT,
+    STATEMENT_SELECT
+} StatementType;
+
 void printPrompt();
-ssize_t getline(char **lineptr, size_t *n, FILE *stream);
 void readInput(InputBuffer *inputBuff);
+InputBuffer *newInputBuffer();
 void closeInputBuffer(InputBuffer *inputBuff);
+ssize_t getline(char **lineptr, size_t *n, FILE *stream);
+MetaCommandResult doMetaCommand(InputBuffer *inputBuff);
 
 int main(int argc, char *argv[]) {
     InputBuffer *inputBuff = newInputBuffer();
@@ -24,12 +40,6 @@ int main(int argc, char *argv[]) {
     while (true) {
         printPrompt();
         readInput(inputBuff);
-
-        // exit program if the exit command is given
-        if (strcmp(inputBuff->buffer, ".exit") == 0) {
-            closeInputBuffer(inputBuff);
-            exit(EXIT_SUCCESS);
-        }
 
         // check for meta commands
         if (inputBuff->buffer[0] == '.') {
