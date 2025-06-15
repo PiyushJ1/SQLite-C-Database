@@ -76,7 +76,6 @@ int main(int argc, char *argv[]) {
     return 0;
 }
 
-
 // initialises new input buffer
 InputBuffer *newInputBuffer() {
     InputBuffer *inputBuff = (InputBuffer *) malloc(sizeof(InputBuffer));
@@ -175,7 +174,7 @@ MetaCommandResult doMetaCommand(InputBuffer *InputBuff) {
 // prepare statement by checking the first keyword of input
 PrepareResult prepareStatement(InputBuffer *InputBuff, Statement *statement) {
     // check only the first 6 characters of the buffer for input,
-    // since input can be followed by something else
+    // since input can be followed by other characters
     // e.g. insert 1 user foo@bar.com
     if (strncmp(InputBuff->buffer, "insert", 6) == 0) {
         statement->type = STATEMENT_INSERT;
