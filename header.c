@@ -14,6 +14,10 @@ void printPrompt() {
     printf("db > ");
 }
 
+void printRow(Row *row) {
+    printf("%d %s %s\n", row->id, row->username, row->email);
+}
+
 /**
  * Manual implementation of the getline() function, which isn't available in
  * C99 on Windows (without additional configuration since it is a 
@@ -120,16 +124,33 @@ PrepareResult prepareStatement(InputBuffer *InputBuff, Statement *statement) {
     return PREPARE_UNRECOGNISED_STATEMENT;
 }
 
-void executeStatement(Statement *statement) {
-    // stub for insert and select commands
+ExecuteResult *executeInsert(Statement *Statement, Table *table) {
+    if (table->numRows >= TABLE_MAX_ROWS) {
+        return EXECUTE_TABLE_FULL;
+    }
+
+    Row *rowToInsert = &(Statement->rowToInsert);
+
+    serialiseRow(rowToInsert, rowSlot(table, table->numRows));
+    table->numRows++;
+
+    return EXECUTE_SUCCESS;
+}
+
+ExecuteResult *executeSelect(Statement *statement, Table *table) {
+    Row row;
+    for (uint32_t i = 0; i < table->numRows; i++) {
+        deserialiseRow(rowSlot(table, i), &row);
+        printRow(&row);
+    }
+}
+
+ExecuteResult *executeStatement(Statement *statement, Table *table) {
     switch (statement->type) {
-    case STATEMENT_INSERT:
-        printf("can insert something here\n");
-        break;
-    
-    case STATEMENT_SELECT:
-        printf("can select something here\n");
-        break;
+        case STATEMENT_INSERT:
+            return executeInsert(statement, table);
+        case STATEMENT_SELECT:
+            return executeSelect(statement, table);
     }
 }
 

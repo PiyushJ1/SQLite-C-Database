@@ -41,6 +41,11 @@ typedef enum {
 } PrepareResult;
 
 typedef enum {
+    EXECUTE_SUCCESS,
+    EXECUTE_TABLE_FULL
+} ExecuteResult;
+
+typedef enum {
     STATEMENT_INSERT,
     STATEMENT_SELECT
 } StatementType;
@@ -62,13 +67,15 @@ typedef struct {
 } Table;
 
 void printPrompt();
+void printRow(Row *row);
 void readInput(InputBuffer *inputBuff);
 InputBuffer *newInputBuffer();
 void closeInputBuffer(InputBuffer *inputBuff);
 ssize_t getline(char **lineptr, size_t *n, FILE *stream);
 MetaCommandResult doMetaCommand(InputBuffer *inputBuff);
 PrepareResult prepareStatement(InputBuffer *InputBuff, Statement *statement);
-void executeStatement(Statement *statement);
+ExecuteResult *executeInsert(Statement *statement, Table *table);
+ExecuteResult *executeSelect(Statement *statement, Table *table);
 
 void serialiseRow(Row *source, void *destination);
 void deserialiseRow(void *source, Row *destination);
