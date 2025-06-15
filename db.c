@@ -35,6 +35,7 @@ int main(int argc, char *argv[]) {
                 continue;
         }
 
+        // execute the statement
         switch (executeStatement(&statement, table)) {
             case (EXECUTE_SUCCESS):
                 printf("Executed successfully.\n");

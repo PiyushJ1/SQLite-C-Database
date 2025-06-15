@@ -194,8 +194,10 @@ Table *newTable() {
 }
 
 void freeTable(Table *table) {
-    for (int i = 0; i < table->numRows; i++) {
-        free(table->pages[i]);
+    for (int i = 0; i < MAX_TABLE_PAGES; i++) {
+        if (table->pages[i] != NULL) {
+            free(table->pages[i]);
+        }
     }
     free(table);
 }
