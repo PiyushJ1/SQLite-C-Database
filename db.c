@@ -58,7 +58,8 @@ int main(int argc, char *argv[]) {
                     continue;
             }
         }
-    
+        
+        // create statement struct and prepare for command
         Statement statement;
         switch (prepareStatement(inputBuff, &statement)) {
             case (PREPARE_SUCCESS):
@@ -70,7 +71,6 @@ int main(int argc, char *argv[]) {
 
         executeStatement(&statement);
         printf("Executed successfully.\n");
-
     }
 
     return 0;
@@ -163,6 +163,7 @@ void closeInputBuffer(InputBuffer *inputBuff) {
     free(inputBuff);
 }
 
+// process the meta command
 MetaCommandResult doMetaCommand(InputBuffer *InputBuff) {
     if (strcmp(InputBuff->buffer, ".exit") == 0) {
         exit(EXIT_SUCCESS);
@@ -171,12 +172,15 @@ MetaCommandResult doMetaCommand(InputBuffer *InputBuff) {
     }
 }
 
+// prepare statement by checking the first keyword of input
 PrepareResult prepareStatement(InputBuffer *InputBuff, Statement *statement) {
+    // check only the first 6 characters of the buffer for input,
+    // since input can be followed by something else
+    // e.g. insert 1 user foo@bar.com
     if (strncmp(InputBuff->buffer, "insert", 6) == 0) {
         statement->type = STATEMENT_INSERT;
         return PREPARE_SUCCESS;
     }
-
     if (strcmp(InputBuff->buffer, "select") == 0) {
         statement->type = STATEMENT_SELECT;
         return PREPARE_SUCCESS;
@@ -186,6 +190,7 @@ PrepareResult prepareStatement(InputBuffer *InputBuff, Statement *statement) {
 }
 
 void executeStatement(Statement *statement) {
+    // stub for insert and select commands
     switch (statement->type) {
     case STATEMENT_INSERT:
         printf("can insert something here\n");
