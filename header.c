@@ -124,7 +124,7 @@ PrepareResult prepareStatement(InputBuffer *InputBuff, Statement *statement) {
     return PREPARE_UNRECOGNISED_STATEMENT;
 }
 
-ExecuteResult *executeInsert(Statement *Statement, Table *table) {
+ExecuteResult executeInsert(Statement *Statement, Table *table) {
     if (table->numRows >= TABLE_MAX_ROWS) {
         return EXECUTE_TABLE_FULL;
     }
@@ -137,7 +137,7 @@ ExecuteResult *executeInsert(Statement *Statement, Table *table) {
     return EXECUTE_SUCCESS;
 }
 
-ExecuteResult *executeSelect(Statement *statement, Table *table) {
+ExecuteResult executeSelect(Statement *statement, Table *table) {
     Row row;
     for (uint32_t i = 0; i < table->numRows; i++) {
         deserialiseRow(rowSlot(table, i), &row);
@@ -145,7 +145,7 @@ ExecuteResult *executeSelect(Statement *statement, Table *table) {
     }
 }
 
-ExecuteResult *executeStatement(Statement *statement, Table *table) {
+ExecuteResult executeStatement(Statement *statement, Table *table) {
     switch (statement->type) {
         case STATEMENT_INSERT:
             return executeInsert(statement, table);
@@ -184,7 +184,7 @@ void *rowSlot(Table *table, uint32_t rowNum) {
 }
 
 Table *newTable() {
-    Table *table = mallco(sizeof(Table));
+    Table *table = malloc(sizeof(Table));
     table->numRows = 0;
     for (uint32_t i = 0; i < MAX_TABLE_PAGES; i++) {
         table->pages[i] = NULL;
@@ -194,7 +194,7 @@ Table *newTable() {
 }
 
 void freeTable(Table *table) {
-    for (int i = 0; i < table->pages[i]; i++) {
+    for (int i = 0; i < table->numRows; i++) {
         free(table->pages[i]);
     }
     free(table);
