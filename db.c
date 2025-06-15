@@ -26,12 +26,19 @@ typedef enum {
     STATEMENT_SELECT
 } StatementType;
 
+typedef struct {
+    StatementType type;
+} Statement;
+
 void printPrompt();
 void readInput(InputBuffer *inputBuff);
 InputBuffer *newInputBuffer();
 void closeInputBuffer(InputBuffer *inputBuff);
 ssize_t getline(char **lineptr, size_t *n, FILE *stream);
+
 MetaCommandResult doMetaCommand(InputBuffer *inputBuff);
+PrepareResult prepareStatement(InputBuffer *InputBuff, Statement *statement);
+void executeStatement(Statement *statement);
 
 int main(int argc, char *argv[]) {
     InputBuffer *inputBuff = newInputBuffer();
@@ -135,4 +142,38 @@ void readInput(InputBuffer *InputBuff) {
 void closeInputBuffer(InputBuffer *inputBuff) {
     free(inputBuff->buffer);
     free(inputBuff);
+}
+
+MetaCommandResult doMetaCommand(InputBuffer *InputBuff) {
+    if (strcmp(InputBuff->buffer, ".exit") == 0) {
+        exit(EXIT_SUCCESS);
+    } else {
+        return META_COMMAND_UNRECOGNISED_COMMAND;
+    }
+}
+
+PrepareResult prepareStatement(InputBuffer *InputBuff, Statement *statement) {
+    if (strncmp(InputBuff->buffer, "insert", 6) == 0) {
+        statement->type = STATEMENT_INSERT;
+        return PREPARE_SUCCESS;
+    }
+
+    if (strcmp(InputBuff->buffer, "select") == 0) {
+        statement->type = STATEMENT_SELECT;
+        return PREPARE_SUCCESS;
+    }
+
+    return PREPARE_UNRECOGNISED_STATEMENT;
+}
+
+void executeStatement(Statement *statement) {
+    switch (statement->type) {
+    case STATEMENT_INSERT:
+        printf("Insert something here\n");
+        break;
+    
+    case STATEMENT_SELECT:
+        printf("Select something here\n");
+        break;
+    }
 }
